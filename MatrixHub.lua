@@ -167,7 +167,8 @@ end
 -- ============================================================
 local Menu = Create("Frame", ScreenGui, {
   Size = UDim2.new(0, 520, 0, 300),
-  Position = UDim2.new(0.5, -260, 0.5, -150),
+  Position = UDim2.new(0.5, 0, 0.5, 0),
+  AnchorPoint = Vector2.new(0.5, 0.5), -- CORREÇÃO: Centraliza perfeitamente em qualquer tela
   BackgroundColor3 = Color3.fromRGB(0, 0, 0),
   Active = true,
   ClipsDescendants = true,
@@ -176,7 +177,7 @@ local Menu = Create("Frame", ScreenGui, {
 Corner(Menu, UDim.new(0, 8))
 Stroke(Menu, Color3.fromRGB(0, 255, 0), 1)
 
--- Sistema de Arrasto Manual (Melhor que Draggable=true)
+-- Sistema de Arrasto Manual
 local dragging = false
 local dragInput, mousePos, framePos
 
@@ -363,7 +364,6 @@ function Library:MakeWindow()
 end
 
 function Library:MinimizeButton()
-  -- O botão de minimizar já está integrado no topo, mas isto atende à chamada da API
   return MinBtn
 end
 
@@ -648,7 +648,6 @@ function Library:AddColorPicker(parent, name, default, callback)
 
   local b = Create("TextButton", frame, { Size = UDim2.new(1, 0, 1, 0), BackgroundTransparency = 1, Text = "", ZIndex = 8 })
   b.MouseButton1Click:Connect(function()
-    -- Simples Palette para demonstração
     local pal = Create("Frame", parent, { Size = UDim2.new(1, 0, 0, 30), BackgroundColor3 = Color3.fromRGB(5,5,5), ZIndex = 10 })
     Corner(pal, UDim.new(0, 4))
     local layout = Create("UIListLayout", pal, { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 4), HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Center })
@@ -665,10 +664,16 @@ function Library:AddColorPicker(parent, name, default, callback)
 end
 
 function Library:AddMobileToggle(parent, name, callback)
-  -- Cria botão flutuante para mobile
-  local f = Create("Frame", ScreenGui, { Size = UDim2.new(0, 50, 0, 50), Position = UDim2.new(0, 50, 0.5, 0), BackgroundColor3 = Color3.fromRGB(0, 20, 0), ZIndex = 50 })
+  -- CORREÇÃO: Adicionado AnchorPoint para o botão não bugar no celular
+  local f = Create("Frame", ScreenGui, { 
+    Size = UDim2.new(0, 50, 0, 50), 
+    Position = UDim2.new(0, 50, 0.5, 0), 
+    AnchorPoint = Vector2.new(0, 0.5), 
+    BackgroundColor3 = Color3.fromRGB(0, 20, 0), ZIndex = 50 
+  })
   Corner(f, UDim.new(1, 0)); Stroke(f, Color3.fromRGB(0,255,0), 1)
   local btn = Create("TextButton", f, { Size = UDim2.new(1, 0, 1, 0), Text = name:sub(1,3), Font = Configs_HUB.Text_Font, TextSize = 12, TextColor3 = Color3.fromRGB(0,255,0), BackgroundTransparency = 1 })
+  
   local dragging = false
   local dragInput, mousePos, framePos
   f.InputBegan:Connect(function(input)
@@ -696,8 +701,9 @@ function Library:AddParagraph(parent, title, text)
 end
 
 function Library:AddImageLabel(parent, imageId, text)
+  -- CORREÇÃO: Adicionado ScaleType.Fit para não distorcer a imagem
   local img = Create("ImageLabel", parent, {
-    Size = UDim2.new(1, 0, 0, 60), Image = "rbxassetid://" .. tostring(imageId), BackgroundTransparency = 1, ZIndex = 6
+    Size = UDim2.new(1, 0, 0, 60), Image = "rbxassetid://" .. tostring(imageId), BackgroundTransparency = 1, ZIndex = 6, ScaleType = Enum.ScaleType.Fit
   })
   Create("TextLabel", img, {
     Size = UDim2.new(1, 0, 0, 15), Position = UDim2.new(0, 0, 1, -15), Text = text, Font = Configs_HUB.Text_Font,
